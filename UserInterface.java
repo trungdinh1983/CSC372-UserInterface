@@ -2,9 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Random;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 public class UserInterface extends JFrame implements ActionListener {
   private JTextArea textArea;
@@ -24,7 +24,7 @@ public class UserInterface extends JFrame implements ActionListener {
     // Create menu items
     dateTimeItem = new JMenuItem("Print Date/Time");
     saveItem = new JMenuItem("Save to File");
-    bgColorItem = new JMenuItem("Change Background Color");
+    bgColorItem = new JMenuItem("Change Background to Random Green");
     exitItem = new JMenuItem("Exit");
 
     // Add action listeners to menu items
@@ -47,15 +47,23 @@ public class UserInterface extends JFrame implements ActionListener {
     contentPanel = new JPanel(new BorderLayout());
     contentPanel.setBackground(Color.WHITE);
 
+    // Create a sub-panel for the text area with padding
+    JPanel textAreaPanel = new JPanel(new BorderLayout());
+    textAreaPanel.setBackground(Color.WHITE);
+    textAreaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+
     // Create text area
     textArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(textArea);
-    contentPanel.add(scrollPane, BorderLayout.CENTER);
+    textAreaPanel.add(scrollPane, BorderLayout.CENTER);
 
-    add(contentPanel, BorderLayout.CENTER);
+    // Add the text area panel to the content panel
+    contentPanel.add(textAreaPanel, BorderLayout.CENTER);
+
+    // Set the main content pane
+    setContentPane(contentPanel);
 
     random = new Random();
-
     pack();
     setLocationRelativeTo(null);
   }
@@ -63,10 +71,12 @@ public class UserInterface extends JFrame implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == dateTimeItem) {
+      // Print date and time to text area
       LocalDateTime now = LocalDateTime.now();
       String formattedDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
       textArea.append("Current Date and Time: " + formattedDateTime + "\n");
     } else if (e.getSource() == saveItem) {
+      // Save text area content to a file
       try {
         FileWriter writer = new FileWriter("log.txt");
         writer.write(textArea.getText());
@@ -76,11 +86,16 @@ public class UserInterface extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
       }
     } else if (e.getSource() == bgColorItem) {
-      float hue = random.nextFloat();
-      Color randomGreen = Color.getHSBColor(hue, 1.0f, 1.0f);
-      contentPanel.setBackground(randomGreen);
-      bgColorItem.setText("Change Background Color (Current Hue: " + String.format("%.2f", hue) + ")");
+      // Change background color to a random green hue
+      int green = random.nextInt(256); // Random green value
+      int red = random.nextInt(100); // Low red value for green dominance
+      int blue = random.nextInt(100); // Low blue value for green dominance
+      Color randomGreen = new Color(red, green, blue);
+      contentPanel.setBackground(randomGreen); // Change the panel's background
+      textArea.setBackground(randomGreen); // Sync text area with the panel
+      bgColorItem.setText("Random Green (RGB: " + red + ", " + green + ", " + blue + ")");
     } else if (e.getSource() == exitItem) {
+      // Exit the program
       System.exit(0);
     }
   }
