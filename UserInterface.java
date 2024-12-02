@@ -10,6 +10,7 @@ public class UserInterface extends JFrame implements ActionListener {
   private JTextArea textArea;
   private JMenuItem dateTimeItem, saveItem, bgColorItem, exitItem;
   private Random random;
+  private JPanel contentPanel;
 
   public UserInterface() {
     setTitle("User Interface");
@@ -42,10 +43,16 @@ public class UserInterface extends JFrame implements ActionListener {
     menuBar.add(menu);
     setJMenuBar(menuBar);
 
+    // Create content panel
+    contentPanel = new JPanel(new BorderLayout());
+    contentPanel.setBackground(Color.WHITE);
+
     // Create text area
     textArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(textArea);
-    add(scrollPane, BorderLayout.CENTER);
+    contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+    add(contentPanel, BorderLayout.CENTER);
 
     random = new Random();
 
@@ -71,7 +78,7 @@ public class UserInterface extends JFrame implements ActionListener {
     } else if (e.getSource() == bgColorItem) {
       float hue = random.nextFloat();
       Color randomGreen = Color.getHSBColor(hue, 1.0f, 1.0f);
-      getContentPane().setBackground(randomGreen);
+      contentPanel.setBackground(randomGreen);
       bgColorItem.setText("Change Background Color (Current Hue: " + String.format("%.2f", hue) + ")");
     } else if (e.getSource() == exitItem) {
       System.exit(0);
